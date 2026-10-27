@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #f1f5f9; font-size: 13px; line-height: 1.6; }
+  .page { padding: 40px; max-width: 900px; margin: 0 auto; }
+
+  /* Cover */
+  .cover { background: linear-gradient(135deg, #0f0f1a 0%, #13131f 100%); border: 1px solid rgba(99,102,241,0.2); border-radius: 20px; padding: 48px; margin-bottom: 32px; }
+  .cover-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+  .cover-logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3)); border: 1px solid rgba(99,102,241,0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .cover-logo-name { font-size: 22px; font-weight: 900; color: #f1f5f9; }
+  .cover-logo-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+  .cover-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #818cf8; margin-bottom: 12px; }
+  .cover-title { font-size: 32px; font-weight: 900; color: #f1f5f9; letter-spacing: -1px; margin-bottom: 8px; }
+  .cover-url { font-size: 16px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-bottom: 32px; word-break: break-all; }
+  .cover-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .cover-meta-item { }
+  .cover-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #64748b; text-transform: uppercase; }
+  .cover-meta-value { font-size: 14px; font-weight: 700; color: #94a3b8; margin-top: 2px; }
+
+  /* Risk Badge */
+  .risk-banner { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(99,102,241,0.2); border-radius: 14px; padding: 20px 28px; margin-bottom: 28px; }
+  .risk-label { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #64748b; }
+  .risk-value { font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+  .risk-critical { color: #ef4444; }
+  .risk-high { color: #f97316; }
+  .risk-medium { color: #eab308; }
+  .risk-low { color: #22c55e; }
+  .risk-score { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+  /* Summary */
+  .summary-row { display: flex; gap: 12px; margin-bottom: 28px; }
+  .sum-card { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; text-align: center; }
+  .sum-num { font-size: 32px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+  .sum-lbl { font-size: 10px; font-weight: 700; color: #64748b; margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .sum-total .sum-num { color: #f1f5f9; }
+  .sum-critical .sum-num { color: #ef4444; }
+  .sum-high .sum-num { color: #f97316; }
+  .sum-medium .sum-num { color: #eab308; }
+  .sum-low .sum-num { color: #22c55e; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 16px; font-weight: 800; color: #f1f5f9; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(99,102,241,0.2); display: flex; align-items: center; gap: 8px; }
+  .section-title::before { content: ''; width: 4px; height: 18px; background: linear-gradient(180deg, #6366f1, #8b5cf6); border-radius: 2px; }
+
+  /* Checklist */
+  .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cl-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+  .cl-vuln { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+  .cl-safe { background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); color: #86efac; }
+  .cl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cl-vuln .cl-dot { background: #ef4444; }
+  .cl-safe .cl-dot { background: #22c55e; }
+
+  /* Finding */
+  .finding { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; margin-bottom: 16px; overflow: hidden; page-break-inside: avoid; }
+  .finding-head { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .sev { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; letter-spacing: 0.5px; flex-shrink: 0; }
+  .sev-critical { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .sev-high { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+  .sev-medium { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+  .sev-low { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+  .f-title { font-size: 14px; font-weight: 700; color: #f1f5f9; flex: 1; }
+  .f-cvss { font-size: 11px; font-weight: 700; color: #64748b; font-family: 'JetBrains Mono', monospace; }
+  .finding-body { padding: 16px 20px; }
+  .f-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f-section { }
+  .f-section.full { grid-column: 1 / -1; }
+  .f-lbl { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
+  .f-text { font-size: 12px; color: #94a3b8; line-height: 1.7; }
+  .f-code { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 10px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; word-break: break-all; }
+  .f-exploit { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; padding: 12px; font-size: 12px; color: #fca5a5; line-height: 1.7; }
+  .f-remediation { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px; padding: 12px; font-size: 12px; color: #86efac; line-height: 1.8; }
+  .f-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .f-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  .f-tag-owasp { background: rgba(99,102,241,0.1); color: #818cf8; border: 1px solid rgba(99,102,241,0.2); }
+  .f-tag-cve { background: rgba(249,115,22,0.1); color: #f97316; border: 1px solid rgba(249,115,22,0.2); }
+
+  /* Footer */
+  .pdf-footer { text-align: center; padding: 24px; border-top: 1px solid rgba(99,102,241,0.15); color: #475569; font-size: 11px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-logo">
+      <div class="cover-logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="url(#g1)"/>
+          <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <defs><linearGradient id="g1" x1="3" y1="2" x2="21" y2="23"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="cover-logo-name">SecureScanner</span>
+      <span class="cover-logo-badge">AI</span>
+    </div>
+    <div class="cover-label">SECURITY ASSESSMENT REPORT</div>
+    <div class="cover-title">Vulnerability Analysis</div>
+    <div class="cover-url">{{ report.url }}</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Scan Date</div>
+        <div class="cover-meta-value">{{ report.timestamp[:19].replace('T', ' ') }} UTC</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Scan Type</div>
+        <div class="cover-meta-value">{{ report.scan_type.upper() }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Report ID</div>
+        <div class="cover-meta-value">{{ report.scan_id[:8].upper() }}</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Total Findings</div>
+        <div class="cover-meta-value">{{ report.summary.total }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk Banner -->
+  <div class="risk-banner">
+    <div>
+      <div class="risk-label">OVERALL RISK LEVEL</div>
+      <div class="risk-value risk-{{ report.summary.risk_level.lower() }}">{{ report.summary.risk_level }}</div>
+      <div class="risk-score">Risk Score: {{ report.summary.risk_score }}</div>
+    </div>
+    <div class="summary-row" style="margin:0;gap:10px">
+      <div class="sum-card sum-critical"><div class="sum-num">{{ report.summary.counts.Critical }}</div><div class="sum-lbl">Critical</div></div>
+      <div class="sum-card sum-high"><div class="sum-num">{{ report.summary.counts.High }}</div><div class="sum-lbl">High</div></div>
+      <div class="sum-card sum-medium"><div class="sum-num">{{ report.summary.counts.Medium }}</div><div class="sum-lbl">Medium</div></div>
+      <div class="sum-card sum-low"><div class="sum-num">{{ report.summary.counts.Low }}</div><div class="sum-lbl">Low</div></div>
+    </div>
+  </div>
+
+  <!-- OWASP Checklist -->
+  <div class="section">
+    <div class="section-title">OWASP Top 10 Coverage</div>
+    <div class="checklist">
+      {% for item in report.checklist %}
+      <div class="cl-item {{ 'cl-vuln' if item.vulnerable else 'cl-safe' }}">
+        <div class="cl-dot"></div>
+        {{ item.item }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <div class="section">
+    <div class="section-title">Vulnerability Findings ({{ report.findings|length }})</div>
+    {% if not report.findings %}
+    <p style="color:#22c55e;font-weight:700;text-align:center;padding:40px">✓ No vulnerabilities detected</p>
+    {% endif %}
+    {% for f in report.findings %}
+    <div class="finding">
+      <div class="finding-head">
+        <span class="sev sev-{{ f.severity.lower() }}">{{ f.severity.upper() }}</span>
+        <span class="f-title">{{ f.check }}</span>
+        <span class="f-cvss">CVSS {{ f.cvss_score }}</span>
+      </div>
+      <div class="finding-body">
+        <div class="f-tags" style="margin-bottom:12px">
+          <span class="f-tag f-tag-owasp">{{ f.category }}</span>
+          {% if f.cve_id and f.cve_id != 'N/A' %}<span class="f-tag f-tag-cve">{{ f.cve_id }}</span>{% endif %}
+        </div>
+        <div class="f-grid">
+          <div class="f-section">
+            <div class="f-lbl">What Is This?</div>
+            <div class="f-text">{{ f.what_is }}</div>
+          </div>
+          <div class="f-section">
+            <div class="f-lbl">Impact</div>
+            <div class="f-text">{{ f.impact }}</div>
+          </div>
+          <div class="f-section full">
+            <div class="f-lbl">Description</div>
+            <div class="f-text">{{ f.description }}</div>
+          </div>
+          <div class="f-section full">
+            <div class="f-lbl">Exploit Scenario</div>
+            <div class="f-exploit">{{ f.exploit_scenario }}</div>
+          </div>
+          <div class="f-section full">
+            <div class="f-lbl">Recommended Remediation</div>
+            <div class="f-remediation">{{ f.remediation }}</div>
+          </div>
+          <div class="f-section full">
+            <div class="f-lbl">Evidence</div>
+            <div class="f-code">{{ f.evidence or 'N/A' }}</div>
+          </div>
+          <div class="f-section">
+            <div class="f-lbl">CVSS Vector</div>
+            <div class="f-code" style="font-size:10px">{{ f.cvss_vector }}</div>
+          </div>
+          <div class="f-section">
+            <div class="f-lbl">OWASP Reference</div>
+            <div class="f-code" style="font-size:10px">{{ f.owasp_link }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="pdf-footer">
+    SecureScanner AI — Security Assessment Report | Generated {{ report.timestamp[:10] }} | For authorized testing only
+  </div>
+</div>
+</body>
+</html>

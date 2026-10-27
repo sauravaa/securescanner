@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Report — SecureScanner AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/main.css">
+<link rel="stylesheet" href="/static/css/report.css">
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo" style="text-decoration:none">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="url(#sg2)"/>
+          <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <defs><linearGradient id="sg2" x1="3" y1="2" x2="21" y2="23"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="logo-text"><span class="logo-name">SecureScanner</span><span class="logo-badge">AI</span></div>
+    </a>
+    <div class="report-header-actions">
+      <button class="action-btn" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
+      <button class="action-btn" id="pdfBtn" onclick="downloadPdf()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF
+      </button>
+      <a href="/" class="scan-btn" style="text-decoration:none;padding:10px 20px;font-size:14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+        New Scan
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main-content" id="reportContent">
+  <div class="loading-state" id="loadingState">
+    <div class="scanning-animation" style="width:64px;height:64px;margin:0 auto 20px">
+      <div class="scan-ring"></div><div class="scan-ring scan-ring-2"></div>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+    </div>
+    <p style="font-size:18px;font-weight:700;color:#f1f5f9">Loading Report...</p>
+  </div>
+  <div id="reportBody" class="hidden"></div>
+</main>
+
+<script>
+const scanId = '{{ scan_id }}';
+
+async function loadReport() {
+  try {
+    const res = await fetch(`/api/scan/${scanId}/result`);
+    if (!res.ok) throw new Error('Report not found');
+    const report = await res.json();
+    renderReport(report);
+  } catch(e) {
+    document.getElementById('loadingState').innerHTML = `<p style="color:#ef4444;font-size:16px;font-weight:600">Failed to load report: ${e.message}</p><a href="/" style="color:#818cf8;margin-top:12px;display:inline-block">← Back to Scanner</a>`;
+  }
+}
+
+function sev(s) {
+  const m = {Critical:'critical',High:'high',Medium:'medium',Low:'low',Info:'info'};
+  return m[s] || 'info';
+}
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderReport(r) {
+  const s = r.summary || {};
+  const findings = r.findings || [];
+  const counts = s.counts || {};
+  const riskClass = sev(s.risk_level);
+
+  const html = `
+  <div class="report-page">
+    <!-- Report Header -->
+    <div class="report-hero">
+      <div class="report-hero-left">
+        <div class="report-badge">SECURITY ASSESSMENT REPORT</div>
+        <h1 class="report-title">${escHtml(r.url)}</h1>
+        <div class="report-meta-row">
+          <span class="report-meta-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${new Date(r.timestamp).toLocaleString()}
+          </span>
+          <span class="report-meta-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 9l3 3-3 3"/><line x1="13" y1="15" x2="16" y2="15"/></svg>
+            ${(r.scan_type||'web').toUpperCase()} SCAN
+          </span>
+          <span class="report-meta-chip">ID: ${r.scan_id.slice(0,8).toUpperCase()}</span>
+        </div>
+      </div>
+      <div class="risk-score-card risk-${riskClass}">
+        <div class="risk-score-label">RISK LEVEL</div>
+        <div class="risk-score-value">${s.risk_level || 'N/A'}</div>
+        <div class="risk-score-num">Score: ${s.risk_score || 0}</div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+      <div class="summary-card summary-total">
+        <div class="summary-num">${s.total || 0}</div>
+        <div class="summary-lbl">Total Findings</div>
+      </div>
+      <div class="summary-card summary-critical">
+        <div class="summary-num">${counts.Critical || 0}</div>
+        <div class="summary-lbl">Critical</div>
+      </div>
+      <div class="summary-card summary-high">
+        <div class="summary-num">${counts.High || 0}</div>
+        <div class="summary-lbl">High</div>
+      </div>
+      <div class="summary-card summary-medium">
+        <div class="summary-num">${counts.Medium || 0}</div>
+        <div class="summary-lbl">Medium</div>
+      </div>
+      <div class="summary-card summary-low">
+        <div class="summary-num">${counts.Low || 0}</div>
+        <div class="summary-lbl">Low</div>
+      </div>
+    </div>
+
+    <!-- OWASP Checklist -->
+    <div class="section-block">
+      <h2 class="block-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        OWASP Top 10 Coverage
+      </h2>
+      <div class="checklist-grid">
+        ${(r.checklist||[]).map(c => `
+          <div class="checklist-item ${c.vulnerable ? 'vuln' : 'safe'}">
+            <div class="checklist-icon">
+              ${c.vulnerable
+                ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+                : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'}
+            </div>
+            <span>${escHtml(c.item)}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Findings -->
+    <div class="section-block">
+      <h2 class="block-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Vulnerability Findings (${findings.length})
+      </h2>
+      ${findings.length === 0
+        ? '<div class="no-findings"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg><p>No vulnerabilities detected</p></div>'
+        : findings.map((f, i) => renderFinding(f, i)).join('')}
+    </div>
+  </div>`;
+
+  document.getElementById('loadingState').classList.add('hidden');
+  const body = document.getElementById('reportBody');
+  body.innerHTML = html;
+  body.classList.remove('hidden');
+}
+
+function renderFinding(f, i) {
+  const sc = sev(f.severity);
+  return `
+  <div class="finding-card" id="finding-${i}">
+    <div class="finding-header" onclick="toggleFinding(${i})">
+      <div class="finding-header-left">
+        <span class="sev-badge sev-${sc}">${f.severity || 'Info'}</span>
+        <div>
+          <div class="finding-title">${escHtml(f.check || 'Unknown')}</div>
+          <div class="finding-category">
+            <a href="${escHtml(f.owasp_link||'#')}" target="_blank" class="owasp-link">${escHtml(f.category||'')}</a>
+            ${f.cve_id && f.cve_id !== 'N/A' ? `<a href="${escHtml(f.cve_link||'#')}" target="_blank" class="cve-link">${escHtml(f.cve_id)}</a>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="finding-header-right">
+        <div class="cvss-badge">CVSS ${f.cvss_score || 'N/A'}</div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="finding-body hidden" id="body-${i}">
+      <div class="finding-grid">
+        <div class="finding-section">
+          <div class="fs-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            What Is This?
+          </div>
+          <p class="fs-text">${escHtml(f.what_is||'')}</p>
+        </div>
+        <div class="finding-section">
+          <div class="fs-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Description
+          </div>
+          <p class="fs-text">${escHtml(f.description||f.detail||'')}</p>
+        </div>
+        <div class="finding-section">
+          <div class="fs-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            Impact
+          </div>
+          <p class="fs-text">${escHtml(f.impact||'')}</p>
+        </div>
+        <div class="finding-section full-width">
+          <div class="fs-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 9l3 3-3 3"/><line x1="13" y1="15" x2="16" y2="15"/></svg>
+            Exploit Scenario
+          </div>
+          <div class="exploit-box">${escHtml(f.exploit_scenario||'')}</div>
+        </div>
+        <div class="finding-section full-width">
+          <div class="fs-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Recommended Remediation
+          </div>
+          <div class="remediation-box">${escHtml(f.remediation||'').replace(/\n/g,'<br>')}</div>
+        </div>
+        <div class="finding-section full-width">
+          <div class="fs-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Evidence
+          </div>
+          <code class="evidence-code">${escHtml(f.evidence||'N/A')}</code>
+        </div>
+        <div class="finding-meta-row">
+          <div class="meta-pill">
+            <span class="meta-pill-label">CVSS Vector</span>
+            <span class="meta-pill-value">${escHtml(f.cvss_vector||'N/A')}</span>
+          </div>
+          <div class="meta-pill">
+            <span class="meta-pill-label">Affected URL</span>
+            <span class="meta-pill-value">${escHtml(f.url||'N/A')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleFinding(i) {
+  const body = document.getElementById(`body-${i}`);
+  const card = document.getElementById(`finding-${i}`);
+  body.classList.toggle('hidden');
+  card.classList.toggle('expanded');
+}
+
+function downloadPdf() {
+  window.open(`/api/report/${scanId}/pdf`, '_blank');
+}
+
+loadReport();
+</script>
+</body>
+</html>

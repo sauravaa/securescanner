@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureScanner AI — World-Class Security Testing Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<!-- Animated Background -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="url(#shieldGrad)"/>
+          <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="shieldGrad" x1="3" y1="2" x2="21" y2="23" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-name">SecureScanner</span>
+        <span class="logo-badge">AI</span>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <span class="nav-tag">OWASP Top 10</span>
+      <span class="nav-tag">API Security</span>
+      <span class="nav-tag">AI-Powered</span>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<main class="main-content">
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="pulse-dot"></span>
+      <span>AI-Powered Security Analysis Engine</span>
+    </div>
+    <h1 class="hero-title">
+      Detect Vulnerabilities<br>
+      <span class="gradient-text">Before Attackers Do</span>
+    </h1>
+    <p class="hero-subtitle">
+      World-class security scanner following OWASP Testing Guide, OWASP Top 10, and API Security standards.
+      Get AI-enriched vulnerability reports with CVSS scores, CVE IDs, and actionable remediation.
+    </p>
+
+    <!-- Scanner Card -->
+    <div class="scanner-card">
+      <div class="scanner-card-header">
+        <div class="scanner-tabs">
+          <button class="tab-btn active" data-type="web" onclick="setType('web', this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Web Application
+          </button>
+          <button class="tab-btn" data-type="api" onclick="setType('api', this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l3 3-3 3"/><line x1="13" y1="15" x2="16" y2="15"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            API / cURL
+          </button>
+        </div>
+      </div>
+
+      <div class="scanner-body">
+        <div class="input-group">
+          <div class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <input type="url" id="targetUrl" class="url-input"
+            placeholder="https://example.com — Enter target URL to scan"
+            autocomplete="off" spellcheck="false"/>
+          <button class="scan-btn" id="scanBtn" onclick="startScan()">
+            <span class="scan-btn-text">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+              Scan Now
+            </span>
+          </button>
+        </div>
+
+        <!-- API Options -->
+        <div id="apiOptions" class="api-options hidden">
+          <div class="api-options-grid">
+            <div class="form-group">
+              <label class="form-label">Custom Headers (JSON)</label>
+              <textarea id="apiHeaders" class="form-textarea" placeholder='{"Authorization": "Bearer token", "X-API-Key": "key"}'></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Additional Endpoints (one per line)</label>
+              <textarea id="apiEndpoints" class="form-textarea" placeholder="/api/v1/users&#10;/api/admin&#10;/api/config"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scan Features -->
+        <div class="scan-features">
+          <div class="feature-chip"><span class="chip-dot critical"></span>SQL Injection</div>
+          <div class="feature-chip"><span class="chip-dot high"></span>XSS Detection</div>
+          <div class="feature-chip"><span class="chip-dot high"></span>CSRF Checks</div>
+          <div class="feature-chip"><span class="chip-dot medium"></span>SSL/TLS Analysis</div>
+          <div class="feature-chip"><span class="chip-dot medium"></span>Security Headers</div>
+          <div class="feature-chip"><span class="chip-dot high"></span>CORS Misconfig</div>
+          <div class="feature-chip"><span class="chip-dot critical"></span>Auth Bypass</div>
+          <div class="feature-chip"><span class="chip-dot high"></span>SSRF/XXE</div>
+          <div class="feature-chip"><span class="chip-dot medium"></span>Cookie Security</div>
+          <div class="feature-chip"><span class="chip-dot high"></span>Open Redirect</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div id="progressSection" class="progress-section hidden">
+      <div class="progress-card">
+        <div class="progress-header">
+          <div class="scanning-animation">
+            <div class="scan-ring"></div>
+            <div class="scan-ring scan-ring-2"></div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+          </div>
+          <div>
+            <div class="progress-title">Security Scan In Progress</div>
+            <div class="progress-subtitle" id="progressMsg">Initializing scan...</div>
+          </div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="progressBar" style="width:0%"></div>
+        </div>
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-number" id="totalScans">0</div>
+      <div class="stat-label">Total Scans</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-number">18+</div>
+      <div class="stat-label">Security Checks</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-number">OWASP</div>
+      <div class="stat-label">Top 10 Coverage</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-number">AI</div>
+      <div class="stat-label">Powered Analysis</div>
+    </div>
+  </section>
+
+  <!-- Scan History -->
+  <section class="history-section" id="historySection">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Scan History</h2>
+        <p class="section-subtitle">All previously scanned applications and their security assessments</p>
+      </div>
+      <button class="refresh-btn" onclick="loadHistory()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+    </div>
+    <div id="historyList" class="history-list">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+        </div>
+        <p class="empty-title">No scans yet</p>
+        <p class="empty-text">Enter a URL above to run your first security scan</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>SecureScanner AI — Open Source Security Testing Platform | Built with OWASP Standards</p>
+  <p class="footer-sub">For authorized security testing only. Always obtain permission before scanning.</p>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
