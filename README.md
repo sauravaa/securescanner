@@ -134,4 +134,4 @@ MIT License — Free to use, modify, and distribute.
 
 ---
 
-Built with ❤️ for the security community | Follow OWASP standards
+Built with ❤️ for the security community | Follow OWASP standards | Developed by Saurav Anand https://www.linkedin.com/in/sauravanandarya/
